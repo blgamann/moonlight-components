@@ -2,13 +2,14 @@ import QuestionList from "@/app/(components)/question/list/page";
 import EventCard from "@/app/(components)/event/page";
 import data from "../../../data.json";
 import BookDetail from "@/app/(components)/garden/book-detail/page"; // Import BookDetail
+import MasonryQuestionDisplay from "@/app/(components)/test4/page"; // Import the new component
 
 // Define types based on data.json structure
 type Book = {
   id: string;
   title: string;
   author: string;
-  description: string;
+  // description: string; // Removed description as it's not in data.json for books
   imageUrl: string;
 };
 
@@ -68,7 +69,9 @@ export default function GardenPage() {
       <BookDetail {...targetBook} />
 
       {/* Pass the filtered questions data */}
-      <QuestionList questions={targetQuestions} />
+      {/* <QuestionList questions={targetQuestions} /> */}
+      {/* Use the new MasonryQuestionDisplay component */}
+      <MasonryQuestionDisplay bookId={TARGET_BOOK_ID} />
 
       {/* Map over filtered events data and render EventCard for each */}
       {targetEvents.length > 0 && (

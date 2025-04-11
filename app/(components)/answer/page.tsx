@@ -1,17 +1,23 @@
 "use client";
 
-import jsonData from "../../../data.json"; // Corrected relative import path
-
+import jsonData from "../../../data.json"; // Keep for profile lookup if needed, or pass author directly
 import React, { useState, useRef, useEffect } from "react";
 import confetti from "canvas-confetti"; // Make sure to install: npm install canvas-confetti
 
 // Define the structure for an answer (as passed via props)
-// This structure comes from MatchingPage's AnswerComponentType
-interface Answer {
-  id: string; // Use string for ID consistency with data.json
+export interface Answer {
+  id: string; // Use string for ID consistency
   author: string;
   date: string;
   content: React.ReactNode;
+  isResonated?: boolean; // Add optional isResonated prop
+  resonanceDate?: string; // Add resonance date
+}
+
+// Define props for the AnswerPage component
+interface AnswerPageProps {
+  answer?: Answer; // Make answer prop optional
+  onResonate?: (answerId: string, date: string) => void; // Add callback prop
 }
 
 // Helper function to find profile name by ID
@@ -20,59 +26,57 @@ const getAuthorName = (profileId: string): string => {
   return profile ? profile.name : "Unknown Author";
 };
 
-// Prepare the default answer from data.json if props are not provided
-const defaultJsonAnswer = jsonData.book_answers[0];
-const defaultAnswer: Answer | null = defaultJsonAnswer
-  ? {
-      // Add null check
-      id: defaultJsonAnswer.id,
-      author: getAuthorName(defaultJsonAnswer.profile_id),
-      date: defaultJsonAnswer.date,
-      content: defaultJsonAnswer.answer_text,
-    }
-  : null; // Handle case where data.json might be empty
+export default function AnswerPage({
+  answer: answerProp,
+  onResonate,
+}: AnswerPageProps) {
+  // Determine the answer to display: use prop or default from data.json
+  const answerToDisplay =
+    answerProp ??
+    (() => {
+      const defaultRawAnswer = jsonData.book_answers[0];
+      if (!defaultRawAnswer) {
+        // Handle case where data.json is empty or book_answers is missing
+        return {
+          id: "default-error",
+          author: "Error",
+          date: new Date().toISOString().split("T")[0],
+          content: "Could not load default answer.",
+        };
+      }
+      return {
+        id: defaultRawAnswer.id,
+        author: getAuthorName(defaultRawAnswer.profile_id),
+        date: defaultRawAnswer.date,
+        content: defaultRawAnswer.answer_text,
+      };
+    })();
 
-// Define props for the AnswerPage component
-interface AnswerPageProps {
-  // Make answers prop optional
-  answers?: Answer[];
-}
-
-export default function AnswerPage({ answers }: AnswerPageProps) {
-  // REMOVED: Pagination state (currentAnswerIndex, setCurrentAnswerIndex)
-
-  // Determine the answer to display: use prop if available, otherwise use default
-  const currentAnswer =
-    answers && answers.length > 0 ? answers[0] : defaultAnswer;
-
-  // If even the default answer isn't available (e.g., data.json is empty), show loading/error
-  if (!currentAnswer) {
-    return <div>답변 데이터를 불러올 수 없습니다.</div>; // Or some other placeholder/error
-  }
-
-  // Event handlers for date and author clicks (now use currentAnswer data)
+  // Changed props destructuring
+  // Event handlers for date and author clicks (use 'answerToDisplay' prop)
   const handleDateClick = () => {
-    alert(`${currentAnswer.date} 답변의 상세 페이지로 이동합니다.`);
+    alert(`${answerToDisplay.date} 답변의 상세 페이지로 이동합니다.`);
   };
 
   const handleAuthorClick = () => {
-    alert(`${currentAnswer.author}님의 프로필로 이동합니다.`);
+    alert(`${answerToDisplay.author}님의 프로필로 이동합니다.`);
   };
 
-  // REMOVED: Pagination handlers (handlePrevious, handleNext)
-
-  // State for the resonance button interaction (remains the same)
+  // State for the resonance button interaction
   const [isPressing, setIsPressing] = useState(false);
   const [fillPercentage, setFillPercentage] = useState(0);
   const [isFilled, setIsFilled] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [localResonanceDate, setLocalResonanceDate] = useState<string | null>(
+    null
+  ); // Add local state for resonance date
 
   const HOLD_DURATION = 2300; // ms
   const INTERVAL_DURATION = 23; // ms
   const INCREMENT = (INTERVAL_DURATION / HOLD_DURATION) * 100;
 
-  // Function to trigger confetti effect (remains the same)
+  // Function to trigger confetti effect
   const triggerConfetti = () => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
@@ -107,9 +111,9 @@ export default function AnswerPage({ answers }: AnswerPageProps) {
     );
   };
 
-  // Function to handle press start (remains the same)
+  // Function to handle press start
   const startPress = () => {
-    if (isFilled) return;
+    if (isFilled || answerProp?.isResonated) return; // Prevent if already resonated
     setIsPressing(true);
     setIsFilled(false);
     setFillPercentage(0);
@@ -122,6 +126,12 @@ export default function AnswerPage({ answers }: AnswerPageProps) {
           timerRef.current = null;
           setIsFilled(true);
           triggerConfetti();
+          const currentDate = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD
+          setLocalResonanceDate(currentDate); // Set local state immediately
+          // Call the callback when resonance is complete
+          if (onResonate && answerToDisplay) {
+            onResonate(answerToDisplay.id, currentDate);
+          }
           return 100;
         }
         return next;
@@ -129,7 +139,7 @@ export default function AnswerPage({ answers }: AnswerPageProps) {
     }, INTERVAL_DURATION);
   };
 
-  // Function to handle press stop (remains the same)
+  // Function to handle press stop
   const stopPress = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -146,7 +156,7 @@ export default function AnswerPage({ answers }: AnswerPageProps) {
     setIsPressing(false);
   };
 
-  // Cleanup timer on component unmount (remains the same)
+  // Cleanup timer on component unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -155,88 +165,93 @@ export default function AnswerPage({ answers }: AnswerPageProps) {
     };
   }, []);
 
-  // Reset resonance state when the *passed answer* changes (based on its ID)
+  // Reset resonance state when the answer changes
   useEffect(() => {
     setIsPressing(false);
     setFillPercentage(0);
     setIsFilled(false);
+    setLocalResonanceDate(null); // Reset local state when answer changes
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-    // Depend on the ID of the current answer passed via props
-  }, [currentAnswer.id]);
+  }, [answerToDisplay?.id]); // Depend on the ID of the answer being displayed
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <>
       {/* Answer Card */}
-      <div className="bg-white shadow-md rounded-lg p-6">
-        {/* Answer Content - Use currentAnswer from props */}
-        <div className="mb-6">{currentAnswer.content}</div>
-        {/* Meta Info - Use currentAnswer from props */}
-        <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
-          <p
-            className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 transition-colors hover:underline"
-            onClick={handleDateClick}
-          >
-            {currentAnswer.date}
-          </p>
-          <p className="text-sm text-gray-500">
-            <span
-              className="cursor-pointer hover:underline"
-              onClick={handleAuthorClick}
-            >
-              {currentAnswer.author}
-            </span>
-            님의 답변
-          </p>
-        </div>
-      </div>
-
-      {/* Resonance Button (remains the same) */}
-      <button
-        ref={buttonRef}
-        className="relative w-full mt-4 py-3 px-4 bg-white text-gray-800 border border-gray-300 font-semibold rounded-lg shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 select-none hover:bg-gray-100"
-        onMouseDown={startPress}
-        onMouseUp={stopPress}
-        onMouseLeave={stopPress}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          startPress();
-        }}
-        onTouchEnd={stopPress}
-        onContextMenu={(e) => e.preventDefault()}
-      >
-        {/* Fill Indicator */}
+      <div className="flex flex-col justify-center items-center">
+        {/* Apply conditional background based on answerProp.isResonated */}
         <div
-          className="absolute top-0 left-0 h-full bg-gray-300 transition-all ease-linear"
-          style={{
-            width: `${fillPercentage}%`,
-            transitionDuration: `${INTERVAL_DURATION}ms`,
-          }}
-        />
-        {/* Button Text */}
-        <span className="relative z-10">
-          {isFilled
-            ? "공명 완료!"
-            : isPressing
-            ? "공명 중..."
-            : "꾹 눌러서 공명"}
-        </span>
-      </button>
+          className={`shadow-md rounded-lg p-6 mb-2 ${
+            answerProp?.isResonated ? "bg-sky-50" : "bg-white"
+          }`}
+        >
+          {" "}
+          {/* Added mb-4 for spacing in list */}
+          {/* Answer Content - Use answerToDisplay */}
+          <div className="mb-6 whitespace-pre-line">
+            {answerToDisplay.content}
+          </div>
+          {/* Meta Info - Use answerToDisplay */}
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
+            <p
+              className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 transition-colors hover:underline"
+              onClick={handleDateClick}
+            >
+              {answerToDisplay.date}
+            </p>
+            <p className="text-sm text-gray-500">
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={handleAuthorClick}
+              >
+                {answerToDisplay.author}
+              </span>
+              님의 답변
+            </p>
+          </div>
+        </div>
 
-      {/* REMOVED: Pagination/Navigation Section */}
-      {/*
-      <div className="mt-6 flex items-center justify-center space-x-4 p-2">
-        <button ... >
-          &lt;- 이전
-        </button>
-        <span> ... </span>
-        <button ... >
-          다음 -&gt;
-        </button>
+        {/* Conditional Rendering: Resonance Button OR Static Date */}
+        {answerProp?.isResonated || localResonanceDate ? ( // Check prop OR local state
+          // Render static resonance date if resonated
+          <div className="relative w-full mt-0 py-3 px-4 bg-gray-100 text-gray-600 border border-gray-300 font-semibold rounded-lg shadow-inner text-center text-sm">
+            {localResonanceDate ?? answerProp?.resonanceDate}에 공명함{" "}
+            {/* Prioritize local, fallback to prop */}
+          </div>
+        ) : (
+          // Render interactive button if not resonated
+          <button
+            ref={buttonRef}
+            className="relative w-full py-3 px-4 bg-white text-gray-800 border border-gray-300 font-semibold rounded-lg shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 select-none hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            onMouseDown={startPress}
+            onMouseUp={stopPress}
+            onMouseLeave={stopPress}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              startPress();
+            }}
+            onTouchEnd={stopPress}
+            onContextMenu={(e) => e.preventDefault()}
+            disabled={isFilled} // Disable button briefly after fill?
+          >
+            {/* Fill Indicator */}
+            <div
+              className="absolute top-0 left-0 h-full bg-gray-300 transition-all ease-linear"
+              style={{
+                width: `${fillPercentage}%`,
+                transitionDuration: `${INTERVAL_DURATION}ms`,
+              }}
+            />
+            {/* Button Text - Simplified */}
+            <span className="relative z-10">
+              {isPressing ? "공명 중..." : "꾹 눌러서 공명"}{" "}
+              {/* Remove "공명 완료!" state */}
+            </span>
+          </button>
+        )}
       </div>
-      */}
-    </div>
+    </>
   );
 }

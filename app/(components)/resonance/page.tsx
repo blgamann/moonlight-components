@@ -45,38 +45,61 @@ export default function ResonancePage() {
     alert(`${seoyeonProfile.name}님의 프로필로 이동합니다.`);
   };
 
+  // Function to calculate resonance date (1 month and 15 days later)
+  const calculateResonanceDate = (dateString: string): string => {
+    const originalDate = new Date(dateString);
+    // Add 1 month
+    originalDate.setMonth(originalDate.getMonth() + 1);
+    // Add 15 days
+    originalDate.setDate(originalDate.getDate() + 15);
+
+    // Format date back to YYYY-MM-DD
+    const year = originalDate.getFullYear();
+    const month = (originalDate.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-indexed
+    const day = originalDate.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="p-4 max-w-2xl mx-auto">
       {latestAnswer ? (
-        <div className="bg-white shadow-md rounded-lg p-6">
-          {/* Answer Content */}
-          <div className="mb-6 prose">
-            {" "}
-            {/* Added prose for better text formatting */}
-            <p>{latestAnswer.answer_text}</p>
-          </div>
-          {/* Meta Info */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
-            <p
-              className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 transition-colors hover:underline"
-              onClick={handleDateClick}
-            >
-              {latestAnswer.date}
-            </p>
-            <p className="text-sm text-gray-500">
-              <span
-                className="cursor-pointer hover:underline"
-                onClick={handleAuthorClick}
-              >
-                {seoyeonProfile.name}
-              </span>
-            </p>
-          </div>
-          {/* Static Resonance Date Indicator - Styled like the button */}
-          <div className="relative w-full mt-4 py-3 px-4 bg-white text-gray-600 border border-gray-300 font-semibold rounded-lg shadow-md text-center text-sm">
-            {latestAnswer.date}에 공명함
-          </div>
-        </div>
+        (() => {
+          // Use IIFE to calculate resonanceDate within the JSX
+          const resonanceDate = calculateResonanceDate(latestAnswer.date);
+          return (
+            <div className="bg-white shadow-md rounded-lg p-6">
+              {/* Answer Content */}
+              <div className="mb-6 prose">
+                {" "}
+                {/* Added prose for better text formatting */}
+                <p>{latestAnswer.answer_text}</p>
+              </div>
+              {/* Meta Info */}
+              <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
+                <p
+                  className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 transition-colors hover:underline"
+                  onClick={handleDateClick}
+                >
+                  {latestAnswer.date} {/* Keep original date here */}
+                </p>
+                <p className="text-sm text-gray-500">
+                  <span
+                    className="cursor-pointer hover:underline"
+                    onClick={handleAuthorClick}
+                  >
+                    {seoyeonProfile.name}
+                  </span>
+                </p>
+              </div>
+              {/* Static Resonance Date Indicator - Styled like the button */}
+              <div className="relative w-full mt-4 py-3 px-4 bg-white text-gray-600 border border-gray-300 font-semibold rounded-lg shadow-md text-center text-sm">
+                {resonanceDate}에 공명함{" "}
+                {/* Use calculated resonance date here */}
+              </div>
+            </div>
+          );
+        })()
       ) : (
         <p className="text-center text-gray-500 mt-6">
           이서연님의 공명한 답변이 없습니다.

@@ -63,6 +63,41 @@ export default function Home() {
                   >
                     Question List for Garden
                   </Link>
+                  {/* Nested list for test layouts */}
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>
+                      <Link
+                        href="/test1"
+                        className="text-blue-600 hover:underline"
+                      >
+                        2분할 레이아웃
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/test2"
+                        className="text-blue-600 hover:underline"
+                      >
+                        아코디언 스타일
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/test3"
+                        className="text-blue-600 hover:underline"
+                      >
+                        모달/팝업 창
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/test4"
+                        className="text-blue-600 hover:underline"
+                      >
+                        매스너리 레이아웃 🙌
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </li>
@@ -83,6 +118,14 @@ export default function Home() {
                     className="text-blue-600 hover:underline"
                   >
                     Answer List Page (User Specific)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/answer/list-for-question"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Answer List Page (Question Specific)
                   </Link>
                 </li>
                 <li>
