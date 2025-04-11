@@ -28,9 +28,8 @@ export default function BookPage(props?: Book | PageProps) {
 
   return (
     // Update Link href to be dynamic based on book id
-    <Link
-      href={`/garden/book-detail/${id}`}
-      className="block group"
+    <div
+      className="block group cursor-pointer"
       onClick={() => alert("가든 상세 페이지로 이동합니다.")}
     >
       <Card className="w-full max-w-4xl mx-auto transition-colors group-hover:bg-gray-50">
@@ -64,6 +63,6 @@ export default function BookPage(props?: Book | PageProps) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 }

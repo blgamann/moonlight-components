@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react"; // Import useState
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -8,7 +11,7 @@ type Book = {
   id: string;
   title: string;
   author: string;
-  description: string;
+  description?: string; // Make description optional
   imageUrl: string;
 };
 
@@ -20,9 +23,21 @@ type PageProps = {
 
 // Update component to accept optional Book props or PageProps
 export default function BookDetailPage(props?: Book | PageProps) {
+  // State for interactivity
+  const [isInterested, setIsInterested] = useState(false);
+  const [hasRead, setHasRead] = useState(false);
+
   // Check if props contain actual book data (e.g., by checking for 'id'), otherwise use fallback
   const book: Book = props && "id" in props ? (props as Book) : data.books[0];
   const { title, author, imageUrl, description } = book; // Destructure props from the determined book data
+
+  // Derived counts based on state
+  const interestedMembers = isInterested ? 1 : 0;
+  const readers = hasRead ? 1 : 0;
+
+  // Handler functions
+  const toggleInterest = () => setIsInterested(!isInterested);
+  const toggleRead = () => setHasRead(!hasRead);
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
@@ -47,38 +62,57 @@ export default function BookDetailPage(props?: Book | PageProps) {
             {/* 상단 정보 */}
             <div className="space-y-3">
               <h1 className="text-2xl font-medium">{`${author}의 『${title}』`}</h1>
-              <p className="text-sm text-gray-600 mt-2">{description}</p>{" "}
-              {/* Display description */}
-              {/* 멤버 수와 소울링크 수 (Keep static for now) */}
+              {/* Conditionally render description */}
+              {description && (
+                <p className="text-sm text-gray-600 mt-2">{description}</p>
+              )}
+              {/* 멤버 수와 소울링크 수 (Update to use state) */}
               <div className="flex gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                  <span>멤버</span>
-                  <span className="font-medium text-green-600">N명</span>
+                  <span>관심 멤버</span>
+                  {/* Display dynamic count */}
+                  <span className="font-medium text-green-600">
+                    {interestedMembers}명
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span>소울링크</span>
-                  <span className="font-medium text-green-600">N명</span>
+                  <span>독자</span>
+                  {/* Display dynamic count */}
+                  <span className="font-medium text-green-600">
+                    {readers}명
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* 하단 액션 버튼들 (Keep static for now) */}
+            {/* 하단 액션 버튼들 (Update for interactivity) */}
             <div className="flex flex-col sm:flex-row gap-2 mt-4">
               <Button
-                variant="outline"
-                className="flex-1 bg-green-50 border-green-200"
+                variant={isInterested ? "default" : "outline"}
+                className={`flex-1 ${
+                  isInterested
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-green-50 border-green-200 text-green-800 hover:bg-green-100"
+                }`}
+                onClick={toggleInterest}
               >
-                관심 가든 등록
+                {isInterested ? "관심 책 해제" : "관심 책 등록"}
+              </Button>
+              <Button
+                variant={hasRead ? "default" : "outline"}
+                className={`flex-1 ${
+                  hasRead
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-green-50 border-green-200 text-green-800 hover:bg-green-100"
+                }`}
+                onClick={toggleRead}
+              >
+                {hasRead ? "읽은 책 취소" : "읽은 책 등록"}
               </Button>
               <Button
                 variant="outline"
-                className="flex-1 bg-green-50 border-green-200"
-              >
-                읽은 책 등록
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 bg-green-50 border-green-200"
+                className="flex-1 bg-green-50 border-green-200 text-green-800 hover:bg-green-100"
+                onClick={() => alert("책 구매 페이지로 이동합니다.")}
               >
                 책 구매
               </Button>

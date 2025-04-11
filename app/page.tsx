@@ -9,14 +9,14 @@ export default function Home() {
           <h1 className="text-2xl font-bold mb-4 text">Components List</h1>
           <ul className="list-none">
             <li className="mb-4">
-              <h2 className="text-xl font-semibold mb-2">Garden</h2>
+              <h2 className="text-xl font-semibold mb-2">Book</h2>
               <ul className="list-disc pl-6">
                 <li>
                   <Link
                     href="/garden/book"
                     className="text-blue-600 hover:underline"
                   >
-                    Book Component
+                    Book Simple Component
                   </Link>
                 </li>
                 <li>
@@ -25,6 +25,22 @@ export default function Home() {
                     className="text-blue-600 hover:underline"
                   >
                     Book Detail Component
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/garden/bookshelf"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Bookshelf
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/garden/interest-book"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Interested Book
                   </Link>
                 </li>
               </ul>
@@ -48,14 +64,6 @@ export default function Home() {
                     Question List for Garden
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/garden/readbook"
-                    className="text-blue-600 hover:underline"
-                  >
-                    Read Book
-                  </Link>
-                </li>
               </ul>
             </li>
             <li className="mb-4">
@@ -75,6 +83,22 @@ export default function Home() {
                     className="text-blue-600 hover:underline"
                   >
                     Answer List Page (User Specific)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/resonance"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Resonances
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/resonance/list"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Resonance List Page
                   </Link>
                 </li>
               </ul>
@@ -130,7 +154,7 @@ export default function Home() {
                     href="/garden"
                     className="text-blue-600 hover:underline"
                   >
-                    Garden Showcase Page
+                    Garden Page
                   </Link>
                 </li>
               </ul>
