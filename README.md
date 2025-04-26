@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# @sgnoo/moonlight-components
 
-## Getting Started
+Moonlight Components 라이브러리입니다. 다양한 UI 컴포넌트를 제공합니다.
 
-First, run the development server:
+## 설치
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install @sgnoo/moonlight-components react react-dom
+# 또는
+yarn add @sgnoo/moonlight-components react react-dom
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Peer Dependencies:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+이 라이브러리는 다음 패키지들을 `peerDependencies`로 가집니다. 프로젝트에 직접 설치해야 합니다:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `react`
+- `react-dom`
+- `@radix-ui/react-slot`
+- `class-variance-authority`
+- `clsx`
+- `date-fns`
+- `framer-motion`
+- `lucide-react`
+- `tailwind-merge`
 
-## Learn More
+필요에 따라 프로젝트에 설치해주세요:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install @radix-ui/react-slot class-variance-authority clsx date-fns framer-motion lucide-react tailwind-merge
+# 또는
+yarn add @radix-ui/react-slot class-variance-authority clsx date-fns framer-motion lucide-react tailwind-merge
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 사용법
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```jsx
+import { Button, Item } from "@sgnoo/moonlight-components";
 
-## Deploy on Vercel
+function MyComponent() {
+  return (
+    <div>
+      <Button>클릭하세요</Button>
+      <Item
+        imageUrl="/path/to/image.png"
+        name="컴포넌트 이름"
+        requestDate={new Date()}
+      />
+      {/* 다른 컴포넌트 사용 */}
+    </div>
+  );
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tailwind CSS 설정
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+이 라이브러리는 Tailwind CSS 유틸리티 클래스를 사용합니다. 라이브러리의 스타일이 올바르게 적용되려면, 사용하는 프로젝트의 `tailwind.config.js` (또는 `.ts`) 파일의 `content` 배열에 라이브러리 경로를 추가해야 합니다:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    // 프로젝트의 다른 파일 경로들...
+    "./node_modules/@sgnoo/moonlight-components/dist/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    // tailwindcss-animate 플러그인을 사용 중이라면 여기에 추가
+    require("tailwindcss-animate"),
+  ],
+};
+```

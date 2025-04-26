@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/button";
-import Item from "@/components/items";
+import React from "react";
+import { Button, Item } from "@sgnoo/moonlight-components";
 
 // Define an interface for the profile data
 interface Profile {
