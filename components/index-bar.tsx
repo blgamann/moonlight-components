@@ -8,7 +8,7 @@ export function IndexBack({ back }: { back?: string }) {
     <div className="flex items-center gap-2">
       <MoveLeft className="text-white/60" />
       {back && (
-        <span className="hidden sm:inline text-white/60 text-base cursor-pointer hover:underline">
+        <span className="text-white/60 text-base cursor-pointer hover:underline">
           {back}
         </span>
       )}
@@ -20,7 +20,7 @@ export function IndexForward({ forward }: { forward?: string }) {
   return (
     <div className="flex items-center gap-2">
       {forward && (
-        <span className="hidden sm:inline text-white/60 text-base cursor-pointer hover:underline">
+        <span className="text-white/60 text-base cursor-pointer hover:underline">
           {forward}
         </span>
       )}

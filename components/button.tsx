@@ -4,7 +4,7 @@ import { Moon } from "lucide-react";
 
 export function Button({ children }: { children: React.ReactNode }) {
   return (
-    <button className="bg-cyan-400 text-white px-4 py-2 rounded-md">
+    <button className="bg-[#1A9FA5] hover:bg-[#28B6C1] text-white px-4 py-2 text-sm rounded-md transition-colors hover:cursor-pointer">
       {children}
     </button>
   );
