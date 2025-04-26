@@ -46,6 +46,7 @@ __export(index_exports, {
   IndexForward: () => IndexForward,
   IndexTop: () => IndexTop,
   IndexTopBack: () => IndexTopBack,
+  Item: () => Item,
   ProfileLg: () => ProfileLg,
   ProfileMd: () => ProfileMd,
   ProfileMdBordered: () => ProfileMdBordered,
@@ -164,11 +165,36 @@ function ButtonDeep() {
   );
 }
 
-// components/items.tsx
+// components/item.tsx
 var import_image = __toESM(require("next/image"));
 var import_date_fns = require("date-fns");
 var import_locale = require("date-fns/locale");
 var import_jsx_runtime2 = require("react/jsx-runtime");
+function Item({ imageUrl, name, requestDate, actions }) {
+  const timeElapsedText = requestDate ? (0, import_date_fns.formatDistanceToNow)(requestDate, { addSuffix: true, locale: import_locale.ko }) : "";
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center justify-between p-4 bg-white/5 rounded-md border border-white/15", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center space-x-4", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "w-12 h-12 relative flex-shrink-0", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        import_image.default,
+        {
+          src: imageUrl,
+          alt: name,
+          fill: true,
+          className: "rounded-full object-cover",
+          unoptimized: true
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-base text-white/95", children: [
+          name,
+          "\uB2D8\uACFC\uC758 \uC18C\uC6B8\uB9C1\uD06C"
+        ] }),
+        requestDate && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-sm text-white/65", children: timeElapsedText })
+      ] })
+    ] }),
+    actions && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "flex items-center space-x-2", children: actions })
+  ] });
+}
 
 // components/tabs.tsx
 var import_react2 = require("react");
@@ -561,6 +587,7 @@ var Answer = ({
   IndexForward,
   IndexTop,
   IndexTopBack,
+  Item,
   ProfileLg,
   ProfileMd,
   ProfileMdBordered,

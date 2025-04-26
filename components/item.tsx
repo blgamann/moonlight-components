@@ -11,12 +11,7 @@ export interface ItemProps {
   actions?: React.ReactNode;
 }
 
-export default function Item({
-  imageUrl,
-  name,
-  requestDate,
-  actions,
-}: ItemProps) {
+export function Item({ imageUrl, name, requestDate, actions }: ItemProps) {
   const timeElapsedText = requestDate
     ? formatDistanceToNow(requestDate, { addSuffix: true, locale: ko })
     : "";

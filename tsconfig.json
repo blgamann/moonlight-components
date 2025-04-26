@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    ".next"
   ]
 }

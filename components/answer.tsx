@@ -1,7 +1,5 @@
 import React from "react";
 import { BookMdQuestion } from "./book";
-import Image from "next/image";
-import Link from "next/link";
 
 interface AnswerSimpleProps {
   answer: {

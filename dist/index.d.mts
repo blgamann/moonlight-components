@@ -12,6 +12,7 @@ interface ItemProps {
     requestDate?: Date;
     actions?: React$1.ReactNode;
 }
+declare function Item({ imageUrl, name, requestDate, actions }: ItemProps): react_jsx_runtime.JSX.Element;
 
 interface BookSmProps {
     title: string;
@@ -118,4 +119,4 @@ interface AnswerProps {
 }
 declare const Answer: React$1.FC<AnswerProps>;
 
-export { Answer, BookLg, BookLgBordered, BookMdAnswer, BookMdMeta, BookMdQuestion, BookSm, type BookSmProps, BookXl, Button, ButtonDeep, IndexBack, IndexBottom, IndexBottomButton, IndexForward, IndexTop, IndexTopBack, type ItemProps, type ProfileBaseProps, ProfileLg, ProfileMd, ProfileMdBordered, ProfileSm, ProfileSmAnswer, ProfileSmIndex, type SoulProfileProps };
+export { Answer, BookLg, BookLgBordered, BookMdAnswer, BookMdMeta, BookMdQuestion, BookSm, type BookSmProps, BookXl, Button, ButtonDeep, IndexBack, IndexBottom, IndexBottomButton, IndexForward, IndexTop, IndexTopBack, Item, type ItemProps, type ProfileBaseProps, ProfileLg, ProfileMd, ProfileMdBordered, ProfileSm, ProfileSmAnswer, ProfileSmIndex, type SoulProfileProps };

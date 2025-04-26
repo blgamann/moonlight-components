@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  IndexBack,
   IndexBottom,
   IndexBottomButton,
-  IndexForward,
   IndexTop,
   IndexTopBack,
 } from "../../components/index-bar";

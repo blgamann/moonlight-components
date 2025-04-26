@@ -107,11 +107,36 @@ function ButtonDeep() {
   );
 }
 
-// components/items.tsx
+// components/item.tsx
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+function Item({ imageUrl, name, requestDate, actions }) {
+  const timeElapsedText = requestDate ? formatDistanceToNow(requestDate, { addSuffix: true, locale: ko }) : "";
+  return /* @__PURE__ */ jsxs2("div", { className: "flex items-center justify-between p-4 bg-white/5 rounded-md border border-white/15", children: [
+    /* @__PURE__ */ jsxs2("div", { className: "flex items-center space-x-4", children: [
+      /* @__PURE__ */ jsx2("div", { className: "w-12 h-12 relative flex-shrink-0", children: /* @__PURE__ */ jsx2(
+        Image,
+        {
+          src: imageUrl,
+          alt: name,
+          fill: true,
+          className: "rounded-full object-cover",
+          unoptimized: true
+        }
+      ) }),
+      /* @__PURE__ */ jsxs2("div", { children: [
+        /* @__PURE__ */ jsxs2("p", { className: "text-base text-white/95", children: [
+          name,
+          "\uB2D8\uACFC\uC758 \uC18C\uC6B8\uB9C1\uD06C"
+        ] }),
+        requestDate && /* @__PURE__ */ jsx2("p", { className: "text-sm text-white/65", children: timeElapsedText })
+      ] })
+    ] }),
+    actions && /* @__PURE__ */ jsx2("div", { className: "flex items-center space-x-2", children: actions })
+  ] });
+}
 
 // components/tabs.tsx
 import { useState as useState2 } from "react";
@@ -503,6 +528,7 @@ export {
   IndexForward,
   IndexTop,
   IndexTopBack,
+  Item,
   ProfileLg,
   ProfileMd,
   ProfileMdBordered,
